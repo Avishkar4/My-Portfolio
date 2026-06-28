@@ -1,337 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avishkar Patil | Equity Research & Finance Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avishkar Patil - Interactive Mask</title>
+  <style>
+    /* Reset and layout */
+    body {
+      margin: 0;
+      background-color: #0a0a0a; /* Dark background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    /* The wrapper that holds both text layers */
+    .text-container {
+      position: relative;
+      font-size: 8vw; /* Scales with screen size */
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -2px;
+      cursor: crosshair; /* Cool cursor for interacting */
+    }
+
+    /* Bottom Layer: The faint/default text */
+    .text-base {
+      color: rgba(255, 255, 255, 0.1); /* Ghostly white */
+      user-select: none;
+    }
+
+    /* Top Layer: The vibrant revealed text */
+    .text-reveal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      color: #ccff00; /* Vibrant neon green (Lando Norris style) */
+      user-select: none;
+      pointer-events: none; /* Lets mouse events pass through to the container */
+      
+      /* The magic: A radial gradient mask driven by CSS variables */
+      -webkit-mask-image: radial-gradient(
+        circle 120px at var(--x, 50%) var(--y, 50%), 
+        black 0%, 
+        rgba(0,0,0,0.5) 40%,
+        transparent 100%
+      );
+      mask-image: radial-gradient(
+        circle 120px at var(--x, 50%) var(--y, 50%), 
+        black 0%, 
+        rgba(0,0,0,0.5) 40%,
+        transparent 100%
+      );
+    }
+  </style>
 </head>
 <body>
 
-    <div class="custom-cursor-dot"></div>
-    <div class="custom-cursor-ring"></div>
+  <div class="text-container" id="hero-text">
+    <div class="text-base">Avishkar Patil</div>
+    <div class="text-reveal" id="reveal-layer">Avishkar Patil</div>
+  </div>
 
-    <header class="site-header">
-        <div class="header-container">
-            <a href="#" class="logo">A.P</a>
-            <nav class="nav-links">
-                <a href="#about" class="nav-item">About</a>
-                <a href="#academics" class="nav-item">Academics</a>
-                <a href="#projects" class="nav-item">Projects</a>
-                <a href="#experience" class="nav-item">Experience</a>
-                <a href="#certifications" class="nav-item">Certifications</a>
-                <a href="#achievements" class="nav-item">Achievements</a>
-                <a href="#contact" class="nav-item">Contact</a>
-            </nav>
-        </div>
-    </header>
+  <script>
+    const container = document.getElementById('hero-text');
+    const revealLayer = document.getElementById('reveal-layer');
+    
+    // We use "target" for where the mouse actually is, 
+    // and "current" for where the mask is currently drawing.
+    let targetX = container.offsetWidth / 2;
+    let targetY = container.offsetHeight / 2;
+    let currentX = targetX;
+    let currentY = targetY;
 
-    <div class="ticker-wrap">
-        <div class="ticker">
-            <span class="ticker-item">SWIGGY VALUATION</span>
-            <span class="ticker-item">DCF MODELING</span>
-            <span class="ticker-item">EQUITY RESEARCH</span>
-            <span class="ticker-item">PRIMARY MARGIN ANALYSIS</span>
-            <span class="ticker-item">NISM CERTIFIED</span>
-            <span class="ticker-item">FINANCIAL MODELING</span>
-        </div>
-    </div>
+    // Track mouse movement over the text container
+    container.addEventListener('mousemove', (e) => {
+      const rect = container.getBoundingClientRect();
+      targetX = e.clientX - rect.left;
+      targetY = e.clientY - rect.top;
+    });
 
-    <section class="hero-section" id="home">
-        <div class="hero-content">
-            <h1 class="reveal-text">Avishkar Patil</h1>
-            <p class="hero-tagline split-words">Finance Student & Equity Research Enthusiast</p>
-            <div class="hero-cta-group reveal-element">
-                <a href="#projects" class="btn btn-primary">View Analysis Reports</a>
-                <a href="#contact" class="btn btn-secondary">Get In Touch</a>
-            </div>
-        </div>
-    </section>
+    // When the mouse leaves, snap the mask back to the center
+    container.addEventListener('mouseleave', () => {
+      targetX = container.offsetWidth / 2;
+      targetY = container.offsetHeight / 2;
+    });
 
-    <section id="about" class="section about-section">
-        <div class="container">
-            <div class="grid grid-2">
-                <div class="reveal-element">
-                    <h2 class="section-title">Executive Summary</h2>
-                    <p class="about-lead">I am an MBA Finance student dedicated to breaking down corporate structures, analyzing fundamental drivers, and identifying core operational realities behind financial metrics.</p>
-                    <p>Based in Mumbai, my analytical perspective is driven by deep strategic curiosity. Whether building comprehensive valuation models or mapping supply parameters, I focus on transforming multi-layered financial data into actionable investment intelligence.</p>
-                </div>
-                <div class="metrics-grid">
-                    <div class="metric-card reveal-element">
-                        <span class="metric-num">450K+</span>
-                        <span class="metric-label">Sales Generated (Void Activewear)</span>
-                    </div>
-                    <div class="metric-card reveal-element">
-                        <span class="metric-num">B.Com</span>
-                        <span class="metric-label">V.G. Vaze Kelkar College</span>
-                    </div>
-                    <div class="metric-card reveal-element">
-                        <span class="metric-num">German</span>
-                        <span class="metric-label">Levels L1 & L2 Competency</span>
-                    </div>
-                    <div class="metric-card reveal-element">
-                        <span class="metric-num">2</span>
-                        <span class="metric-label">NISM Core Certifications</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    // The Animation Loop: Linear Interpolation (LERP)
+    // This gives the mask a "heavy fluid" delay as it follows the cursor
+    function animate() {
+      // Move 'current' towards 'target' by 10% every frame
+      currentX += (targetX - currentX) * 0.1;
+      currentY += (targetY - currentY) * 0.1;
 
-    <div class="parallax-banner">
-        <div class="parallax-bg" data-speed="0.3"></div>
-        <h2 class="parallax-text">RIGOROUS STRATEGIC ANALYSIS GENERATES ALPHA</h2>
-    </div>
+      // Feed the calculated coordinates into the CSS variables
+      revealLayer.style.setProperty('--x', `${currentX}px`);
+      revealLayer.style.setProperty('--y', `${currentY}px`);
 
-    <section id="academics" class="section academics-section">
-        <div class="container">
-            <h2 class="section-title reveal-element">Academic Framework</h2>
-            <div class="timeline">
-                <div class="timeline-item reveal-element">
-                    <div class="timeline-meta">
-                        <span class="academic-year">Present</span>
-                        <span class="academic-degree">MBA Finance</span>
-                    </div>
-                    <div class="timeline-content">
-                        <h3>Post Graduate Management Studies</h3>
-                        <p class="academic-institution">Mumbai</p>
-                        <p>Core focus: Advanced Corporate Finance, Investment Banking Ecosystems, and Security Analysis frameworks.</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal-element">
-                    <div class="timeline-meta">
-                        <span class="academic-year">Graduated</span>
-                        <span class="academic-degree">7.09 CGPA</span>
-                    </div>
-                    <div class="timeline-content">
-                        <h3>Bachelor of Commerce (B.Com)</h3>
-                        <p class="academic-institution">V.G. Vaze Kelkar College of Arts, Science & Commerce</p>
-                        <p>Served as College Social Media Head for the flagship event <strong>Plutus</strong>. Managed a commerce-centric speech platform, coordinated over 10 retail stalls, and helped generate ₹25,000+ in corporate event revenue.</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal-element">
-                    <div class="timeline-meta">
-                        <span class="academic-year">2023</span>
-                        <span class="academic-degree">90.67%</span>
-                    </div>
-                    <div class="timeline-content">
-                        <h3>Higher Secondary Certificate (12th)</h3>
-                        <p class="academic-institution">P.S. Deshmukh Junior College</p>
-                    </div>
-                </div>
-                <div class="timeline-item reveal-element">
-                    <div class="timeline-meta">
-                        <span class="academic-year">2021</span>
-                        <span class="academic-degree">86.60%</span>
-                    </div>
-                    <div class="timeline-content">
-                        <h3>Secondary School Certificate (10th)</h3>
-                        <p class="academic-institution">Prakalp Vidyalaya Bhatsanagar</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+      // Keep the loop running
+      requestAnimationFrame(animate);
+    }
 
-    <div id="projects-pin-container">
-        <section id="projects" class="horizontal-scroll-section">
-            <div class="horizontal-slider">
-                
-                <div class="slide intro-slide">
-                    <div class="slide-inner">
-                        <h2 class="massive-title">Selected<br>Projects</h2>
-                        <p class="slide-subtitle">Scroll down to navigate horizontally →</p>
-                    </div>
-                </div>
+    // Start the loop
+    animate();
+  </script>
 
-                <div class="slide project-slide">
-                    <div class="slide-inner">
-                        <span class="project-category">Equity Research & Analytics</span>
-                        <h3>Swiggy Evaluation & KPI Matrix</h3>
-                        <p>An in-depth structural overview highlighting operational unit economics, marketplace dynamics, customer acquisition costs, and path-to-profitability KPIs.</p>
-                        <div class="project-links">
-                            <a href="https://avishkar4.github.io/Swiggy-Company-Analysis-Report/" target="_blank" class="project-link-btn">Interactive Page</a>
-                            <a href="https://drive.google.com/file/d/1to4zZGDKB2vohGbp9TSSEqJ289rYG02z/view?usp=sharing" target="_blank" class="project-link-btn secondary">PDF Report</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="slide project-slide">
-                    <div class="slide-inner">
-                        <span class="project-category">Financial Modeling</span>
-                        <h3>Swiggy Valuation Framework (DCF)</h3>
-                        <p>A systematic Discounted Cash Flow model projection simulating realistic revenue growth curves, terminal value calculations, WACC dependencies, and sensitivity analyses.</p>
-                        <div class="project-links">
-                            <span class="status-badge">Model Architecture Sandbox</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="slide project-slide">
-                    <div class="slide-inner">
-                        <span class="project-category">Corporate Finance</span>
-                        <h3>Automotive EV Sector Pipeline</h3>
-                        <p>A planned asset mapping study reviewing macroeconomic factors, margin profiles, supply chain tracking, and cost drivers within Ather Energy's evolving market roadmap.</p>
-                        <div class="project-links">
-                            <span class="status-badge alpha">Forthcoming Evaluation</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="slide project-slide">
-                    <div class="slide-inner">
-                        <span class="project-category">Consumer Sector Analysis</span>
-                        <h3>Direct-to-Consumer Market Strategy</h3>
-                        <p>Primary data capture models exploring inventory velocity mechanics, sourcing unit metrics, and margin optimization profiles for modern athletic wear brands.</p>
-                        <div class="project-links">
-                            <span class="status-badge alpha">Forthcoming Evaluation</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-    </div>
-
-    <section id="experience" class="section experience-section">
-        <div class="container">
-            <h2 class="section-title reveal-element">Professional History</h2>
-            <div class="experience-list">
-                
-                <div class="experience-card reveal-element">
-                    <div class="exp-header">
-                        <div class="exp-title-box">
-                            <h3>Founding Corporate Member</h3>
-                            <span class="exp-company">Void Activewear</span>
-                        </div>
-                        <span class="exp-timeline">June 2025 — May 2026</span>
-                    </div>
-                    <p class="exp-summary">Directed key functional areas across operations, financial budgeting, and production logistics for an emerging fitness brand.</p>
-                    <ul class="exp-bullets">
-                        <li>Managed internal workflows, generating over ₹450K in total top-line sales.</li>
-                        <li>Conducted intensive consumer primary research to validate material selections and pricing tiers.</li>
-                        <li>Analyzed factory-level unit costs to secure optimal manufacturing terms.</li>
-                    </ul>
-                </div>
-
-                <div class="experience-card reveal-element">
-                    <div class="exp-header">
-                        <div class="exp-title-box">
-                            <h3>Digital Infrastructure Intern</h3>
-                            <span class="exp-company">Learn Transformation</span>
-                        </div>
-                        <span class="exp-timeline">Aug 2023 — Sept 2023</span>
-                    </div>
-                    <p class="exp-summary">Handled search engine visibility and targeted online audience positioning channels.</p>
-                    <ul class="exp-bullets">
-                        <li>Managed organic SEO architectures for web properties, increasing visibility metrics on search engines.</li>
-                        <li>Published systematic analytical insights across corporate LinkedIn surfaces to increase engagement.</li>
-                    </ul>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section id="certifications" class="section certifications-section">
-        <div class="container">
-            <h2 class="section-title reveal-element">Industry Credentials</h2>
-            <div class="grid grid-4">
-                
-                <div class="cert-card reveal-element">
-                    <span class="cert-authority">NISM</span>
-                    <h4>Research Analyst (Series XV)</h4>
-                    <span class="cert-date">Expected July 2026</span>
-                </div>
-
-                <div class="cert-card reveal-element">
-                    <span class="cert-authority">NISM</span>
-                    <h4>Equity Derivatives (Series VIII)</h4>
-                    <span class="cert-date">Expected Aug 2026</span>
-                </div>
-
-                <div class="cert-card reveal-element">
-                    <span class="cert-authority">IIT Bombay</span>
-                    <h4>AI Frameworks for Management</h4>
-                    <span class="cert-date">Nov 2024</span>
-                </div>
-
-                <div class="cert-card reveal-element">
-                    <span class="cert-authority">Freelancers Academy</span>
-                    <h4>Integrated Digital Marketing</h4>
-                    <span class="cert-date">June 2024</span>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section id="achievements" class="section achievements-section">
-        <div class="container">
-            <h2 class="section-title reveal-element">Key Milestones</h2>
-            <div class="achievements-wrapper">
-                
-                <div class="achievement-row reveal-element">
-                    <span class="ach-index">01</span>
-                    <div class="ach-content">
-                        <h4>Corporate Event Operations Head — Plutus</h4>
-                        <p>Managed public speaking panels and logistics for over 50 delegates while engineering sustainable revenue platforms.</p>
-                    </div>
-                </div>
-
-                <div class="achievement-row reveal-element">
-                    <span class="ach-index">02</span>
-                    <div class="ach-content">
-                        <h4>Strategic Corporate Case Winner</h4>
-                        <p>Secured top honors during simulation events focused on business scalability, fiscal mechanics, and competitive market positioning.</p>
-                    </div>
-                </div>
-
-                <div class="achievement-row reveal-element">
-                    <span class="ach-index">03</span>
-                    <div class="ach-content">
-                        <h4>German Language Competency</h4>
-                        <p>Successfully completed and certified in levels L1 and L2, enabling access to global corporate communication channels.</p>
-                    </div>
-                </div>
-
-                <div class="achievement-row reveal-element">
-                    <span class="ach-index">04</span>
-                    <div class="ach-content">
-                        <h4>E-Commerce Startup Valuation & Scale</h4>
-                        <p>Scaled an activewear brand from conception to over ₹450,000 in gross revenue through targeted market planning.</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="section contact-section">
-        <div class="container">
-            <div class="contact-box reveal-element">
-                <span class="contact-pre">Let's Connect</span>
-                <h2 class="contact-main-title">Start a Conversation</h2>
-                <p class="contact-intro">Looking to discuss equity research opportunities, corporate strategy analysis, or financial modeling initiatives.</p>
-                
-                <div class="contact-details">
-                    <a href="mailto:avishkar.patil44@gmail.com" class="contact-link mail-cta">avishkar.patil44@gmail.com</a>
-                    <a href="tel:+917758099037" class="contact-link telephone">+91 7758099037</a>
-                </div>
-
-                <div class="contact-social">
-                    <a href="https://www.linkedin.com/in/avishkar-patil-7901011a6/" target="_blank" class="social-btn-link">Connect on LinkedIn</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
-    <script src="script.js"></script>
 </body>
 </html>
