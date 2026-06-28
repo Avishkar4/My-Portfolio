@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Avishkar Patil - Liquid Mask</title>
+  <title>Avishkar Patil - Liquid Hover Mask</title>
   <style>
     body {
       margin: 0;
@@ -16,64 +16,67 @@
       font-family: 'Helvetica Neue', Arial, sans-serif;
     }
 
+    /* Padding added so the hover effect triggers just before you hit the text */
     .text-container {
       position: relative;
+      padding: 40px; 
       font-size: 10vw;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: -3px;
       white-space: nowrap;
+      cursor: crosshair;
     }
 
-    /* Bottom Layer: Faint background text */
     .text-base {
-      color: rgba(255, 255, 255, 0.08);
+      color: rgba(255, 255, 255, 0.05); /* Made slightly darker so the neon pops more */
       user-select: none;
     }
 
-    /* Top Layer: The fluid revealed text */
     .text-reveal {
       position: absolute;
-      top: 0;
-      left: 0;
-      color: #ccff00; /* Lando Norris Neon */
+      top: 40px; /* Matches the padding of the container to keep it aligned */
+      left: 40px;
+      color: #ccff00; 
       user-select: none;
       pointer-events: none;
       
-      /* Apply the SVG liquid distortion filter */
-      filter: url('#liquid');
+      /* THE FADE EFFECT: Hidden by default, smooth fade in */
+      opacity: 0;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      
+      /* Apply the heavy liquid filter */
+      filter: url('#heavy-liquid');
 
-      /* Harsher gradient so the liquid edges are sharper and more visible */
       -webkit-mask-image: radial-gradient(
-        circle 150px at var(--x, 50%) var(--y, 50%), 
-        black 0%, 
-        black 40%,
-        rgba(0,0,0,0.8) 60%,
-        transparent 90%
+        circle 180px at var(--x, 50%) var(--y, 50%), 
+        black 10%, 
+        rgba(0,0,0,0.9) 40%,
+        transparent 75%
       );
       mask-image: radial-gradient(
-        circle 150px at var(--x, 50%) var(--y, 50%), 
-        black 0%, 
-        black 40%,
-        rgba(0,0,0,0.8) 60%,
-        transparent 90%
+        circle 180px at var(--x, 50%) var(--y, 50%), 
+        black 10%, 
+        rgba(0,0,0,0.9) 40%,
+        transparent 75%
       );
+    }
+
+    /* Trigger the fade-in when the mouse enters the container */
+    .text-container:hover .text-reveal {
+      opacity: 1;
     }
   </style>
 </head>
 <body>
 
-  <!-- Invisible SVG to hold the liquid math -->
   <svg style="position: absolute; width: 0; height: 0;" xmlns="http://www.w3.org/2000/svg" version="1.1">
     <defs>
-      <filter id="liquid">
-        <!-- Generates the flowing noise. 'baseFrequency' changes the size of the ripples -->
-        <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3" result="noise">
-          <!-- Animates the fluid so it ripples even when the mouse is still -->
-          <animate attributeName="baseFrequency" values="0.015;0.025;0.015" dur="8s" repeatCount="indefinite" />
+      <filter id="heavy-liquid">
+        <feTurbulence type="fractalNoise" baseFrequency="0.005" numOctaves="4" result="noise">
+          <animate attributeName="baseFrequency" values="0.005;0.009;0.005" dur="8s" repeatCount="indefinite" />
         </feTurbulence>
-        <!-- Displaces the text and mask based on the noise. Higher 'scale' = more warping -->
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="35" xChannelSelector="R" yChannelSelector="G" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="60" xChannelSelector="R" yChannelSelector="G" />
       </filter>
     </defs>
   </svg>
@@ -84,39 +87,16 @@
   </div>
 
   <script>
+    const container = document.getElementById('hero-text');
     const revealLayer = document.getElementById('reveal-layer');
     
-    // Start the blob in the center of the screen
-    let targetX = window.innerWidth / 2;
-    let targetY = window.innerHeight / 2;
+    let targetX = container.offsetWidth / 2;
+    let targetY = container.offsetHeight / 2;
     let currentX = targetX;
     let currentY = targetY;
 
-    // Track mouse globally across the whole window
-    window.addEventListener('mousemove', (e) => {
-      targetX = e.clientX;
-      targetY = e.clientY;
-    });
-
-    function animate() {
-      // 0.08 multiplier adds a slightly heavier "liquid" drag to the cursor
-      currentX += (targetX - currentX) * 0.08;
-      currentY += (targetY - currentY) * 0.08;
-
-      // Because the mouse is tracked on the window, we need to calculate
-      // its position relative to the text container to keep the mask accurate.
-      const rect = revealLayer.getBoundingClientRect();
-      const localX = currentX - rect.left;
-      const localY = currentY - rect.top;
-
-      revealLayer.style.setProperty('--x', `${localX}px`);
-      revealLayer.style.setProperty('--y', `${localY}px`);
-
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-  </script>
-
-</body>
-</html>
+    // Track the mouse only when it is inside the text container area
+    container.addEventListener('mousemove', (e) => {
+      const rect = container.getBoundingClientRect();
+      // Subtract the 40px padding so the center of the liquid aligns perfectly with the cursor
+      targetX = e.
