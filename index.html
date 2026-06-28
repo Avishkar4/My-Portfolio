@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Avishkar Patil - Interactive Mask</title>
+  <title>Avishkar Patil - Liquid Mask</title>
   <style>
-    /* Reset and layout */
     body {
       margin: 0;
-      background-color: #0a0a0a; /* Dark background */
+      background-color: #050505;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -17,48 +16,67 @@
       font-family: 'Helvetica Neue', Arial, sans-serif;
     }
 
-    /* The wrapper that holds both text layers */
     .text-container {
       position: relative;
-      font-size: 8vw; /* Scales with screen size */
+      font-size: 10vw;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: -2px;
-      cursor: crosshair; /* Cool cursor for interacting */
+      letter-spacing: -3px;
+      white-space: nowrap;
     }
 
-    /* Bottom Layer: The faint/default text */
+    /* Bottom Layer: Faint background text */
     .text-base {
-      color: rgba(255, 255, 255, 0.1); /* Ghostly white */
+      color: rgba(255, 255, 255, 0.08);
       user-select: none;
     }
 
-    /* Top Layer: The vibrant revealed text */
+    /* Top Layer: The fluid revealed text */
     .text-reveal {
       position: absolute;
       top: 0;
       left: 0;
-      color: #ccff00; /* Vibrant neon green (Lando Norris style) */
+      color: #ccff00; /* Lando Norris Neon */
       user-select: none;
-      pointer-events: none; /* Lets mouse events pass through to the container */
+      pointer-events: none;
       
-      /* The magic: A radial gradient mask driven by CSS variables */
+      /* Apply the SVG liquid distortion filter */
+      filter: url('#liquid');
+
+      /* Harsher gradient so the liquid edges are sharper and more visible */
       -webkit-mask-image: radial-gradient(
-        circle 120px at var(--x, 50%) var(--y, 50%), 
+        circle 150px at var(--x, 50%) var(--y, 50%), 
         black 0%, 
-        rgba(0,0,0,0.5) 40%,
-        transparent 100%
+        black 40%,
+        rgba(0,0,0,0.8) 60%,
+        transparent 90%
       );
       mask-image: radial-gradient(
-        circle 120px at var(--x, 50%) var(--y, 50%), 
+        circle 150px at var(--x, 50%) var(--y, 50%), 
         black 0%, 
-        rgba(0,0,0,0.5) 40%,
-        transparent 100%
+        black 40%,
+        rgba(0,0,0,0.8) 60%,
+        transparent 90%
       );
     }
   </style>
 </head>
 <body>
+
+  <!-- Invisible SVG to hold the liquid math -->
+  <svg style="position: absolute; width: 0; height: 0;" xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <defs>
+      <filter id="liquid">
+        <!-- Generates the flowing noise. 'baseFrequency' changes the size of the ripples -->
+        <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="3" result="noise">
+          <!-- Animates the fluid so it ripples even when the mouse is still -->
+          <animate attributeName="baseFrequency" values="0.015;0.025;0.015" dur="8s" repeatCount="indefinite" />
+        </feTurbulence>
+        <!-- Displaces the text and mask based on the noise. Higher 'scale' = more warping -->
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="35" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
 
   <div class="text-container" id="hero-text">
     <div class="text-base">Avishkar Patil</div>
@@ -66,45 +84,37 @@
   </div>
 
   <script>
-    const container = document.getElementById('hero-text');
     const revealLayer = document.getElementById('reveal-layer');
     
-    // We use "target" for where the mouse actually is, 
-    // and "current" for where the mask is currently drawing.
-    let targetX = container.offsetWidth / 2;
-    let targetY = container.offsetHeight / 2;
+    // Start the blob in the center of the screen
+    let targetX = window.innerWidth / 2;
+    let targetY = window.innerHeight / 2;
     let currentX = targetX;
     let currentY = targetY;
 
-    // Track mouse movement over the text container
-    container.addEventListener('mousemove', (e) => {
-      const rect = container.getBoundingClientRect();
-      targetX = e.clientX - rect.left;
-      targetY = e.clientY - rect.top;
+    // Track mouse globally across the whole window
+    window.addEventListener('mousemove', (e) => {
+      targetX = e.clientX;
+      targetY = e.clientY;
     });
 
-    // When the mouse leaves, snap the mask back to the center
-    container.addEventListener('mouseleave', () => {
-      targetX = container.offsetWidth / 2;
-      targetY = container.offsetHeight / 2;
-    });
-
-    // The Animation Loop: Linear Interpolation (LERP)
-    // This gives the mask a "heavy fluid" delay as it follows the cursor
     function animate() {
-      // Move 'current' towards 'target' by 10% every frame
-      currentX += (targetX - currentX) * 0.1;
-      currentY += (targetY - currentY) * 0.1;
+      // 0.08 multiplier adds a slightly heavier "liquid" drag to the cursor
+      currentX += (targetX - currentX) * 0.08;
+      currentY += (targetY - currentY) * 0.08;
 
-      // Feed the calculated coordinates into the CSS variables
-      revealLayer.style.setProperty('--x', `${currentX}px`);
-      revealLayer.style.setProperty('--y', `${currentY}px`);
+      // Because the mouse is tracked on the window, we need to calculate
+      // its position relative to the text container to keep the mask accurate.
+      const rect = revealLayer.getBoundingClientRect();
+      const localX = currentX - rect.left;
+      const localY = currentY - rect.top;
 
-      // Keep the loop running
+      revealLayer.style.setProperty('--x', `${localX}px`);
+      revealLayer.style.setProperty('--y', `${localY}px`);
+
       requestAnimationFrame(animate);
     }
 
-    // Start the loop
     animate();
   </script>
 
