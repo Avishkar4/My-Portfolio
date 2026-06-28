@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Avishkar Patil - Liquid Hover Mask</title>
+  <title>Avishkar Patil - Red Spotlight Mask</title>
   <style>
     body {
       margin: 0;
@@ -16,7 +16,6 @@
       font-family: 'Helvetica Neue', Arial, sans-serif;
     }
 
-    /* Padding added so the hover effect triggers just before you hit the text */
     .text-container {
       position: relative;
       padding: 40px; 
@@ -29,25 +28,23 @@
     }
 
     .text-base {
-      color: rgba(255, 255, 255, 0.05); /* Made slightly darker so the neon pops more */
+      color: rgba(255, 255, 255, 0.05);
       user-select: none;
     }
 
     .text-reveal {
       position: absolute;
-      top: 40px; /* Matches the padding of the container to keep it aligned */
+      top: 40px; 
       left: 40px;
-      color: #ccff00; 
+      color: #ff0000; /* Changed to red */
       user-select: none;
       pointer-events: none;
       
-      /* THE FADE EFFECT: Hidden by default, smooth fade in */
+      /* Hidden by default, smooth fade in */
       opacity: 0;
       transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      
-      /* Apply the heavy liquid filter */
-      filter: url('#heavy-liquid');
 
+      /* The smooth spotlight mask */
       -webkit-mask-image: radial-gradient(
         circle 180px at var(--x, 50%) var(--y, 50%), 
         black 10%, 
@@ -70,17 +67,6 @@
 </head>
 <body>
 
-  <svg style="position: absolute; width: 0; height: 0;" xmlns="http://www.w3.org/2000/svg" version="1.1">
-    <defs>
-      <filter id="heavy-liquid">
-        <feTurbulence type="fractalNoise" baseFrequency="0.005" numOctaves="4" result="noise">
-          <animate attributeName="baseFrequency" values="0.005;0.009;0.005" dur="8s" repeatCount="indefinite" />
-        </feTurbulence>
-        <feDisplacementMap in="SourceGraphic" in2="noise" scale="60" xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-    </defs>
-  </svg>
-
   <div class="text-container" id="hero-text">
     <div class="text-base">Avishkar Patil</div>
     <div class="text-reveal" id="reveal-layer">Avishkar Patil</div>
@@ -98,5 +84,24 @@
     // Track the mouse only when it is inside the text container area
     container.addEventListener('mousemove', (e) => {
       const rect = container.getBoundingClientRect();
-      // Subtract the 40px padding so the center of the liquid aligns perfectly with the cursor
-      targetX = e.
+      // Subtract the 40px padding so the spotlight aligns perfectly with the cursor
+      targetX = e.clientX - rect.left - 40;
+      targetY = e.clientY - rect.top - 40;
+    });
+
+    function animate() {
+      // LERP (Linear Interpolation) for the smooth dragging physics feel
+      currentX += (targetX - currentX) * 0.08;
+      currentY += (targetY - currentY) * 0.08;
+
+      revealLayer.style.setProperty('--x', `${currentX}px`);
+      revealLayer.style.setProperty('--y', `${currentY}px`);
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+
+</body>
+</html>
